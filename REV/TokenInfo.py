@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 class TokenInfo(object):
-	def __init__(self,idf,listTokenOccurence):
-		self.idf = idf
+	def __init__(self,listTokenOccurence):
+		self.idf = 0.0
 		self.listTokenOccurence = listTokenOccurence
 
 	def get_idf(self):
@@ -22,5 +22,5 @@ class TokenInfo(object):
 
 	def size_listTokenOccurence(self):
 		return len(self.listTokenOccurence)
-	
+		
 	

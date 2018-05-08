@@ -11,27 +11,35 @@ from InforDocument import InforDocument
 
 class Build_index(object):	
 
-	directory = "/home/bruno/Documentos/RI/information-retrieval/Implementação2/teste/"
+	#directory = "/home/bruno/Documentos/RI/information-retrieval/Implementação2/teste/"
+	directory ="/home/bruno/Documentos/RI/stories/"
 	# GUARDAR A MAIOR FREQUENCIA DENTRO DO ARQUIVO
 	dictDocument = {}	
 	
 	def create_dict(self):	
+		limite = int(input("Sistema deve indexar quantos arquivos? "))
+		if limite == 0:
+			limite = 1000
+
 		dictWords = {}
+		cont = 0
 		print("|PROCESSANDO|")	
 		listDocument = self.list_all_documents()		
 		sizeCollection=len(listDocument)
 		# LISTA DE DOCUMENTOS.
 		for file in listDocument:
-			self.dictDocument[file] = InforDocument(0.0,0.0)			
+			cont += 1
+			if cont > limite:
+				break
+			#self.dictDocument[file] = InforDocument(0.0,0.0)			
 			hashTableVector = TextFileDocument(file).to_vector(self.directory)
 			# LISTA DE TOKENS 
-			documentReference = DocumentReference(file)	
-			print("File"+"- "+file)						
-			print(documentReference.get_path())
-			print(documentReference)
-			print("====================")		
+			documentReference = DocumentReference(file)		
+			# VERIFICANDO QUEM É O TOKEN COM MAIOR OCORRENCIA.
+			freque_max  =  hashTableVector.max()		
+			documentReference.set_max_token(freque_max)
 			for token in hashTableVector.keys():
-				freque = hashTableVector.get(token)								
+				freque = hashTableVector.get(token)															
 				if token in dictWords:
 					tokenInfo = dictWords[token]					
 					tokenOccurence = TokenOccurence(documentReference,freque)
@@ -40,10 +48,11 @@ class Build_index(object):
 					#dictWords[token].set_tokenOccurence_list(tokenOccurence)
 				else:										
 					tokenOccurence = TokenOccurence(documentReference,freque)					
-					tokenInfo  = TokenInfo(0.0,[tokenOccurence])					
+					tokenInfo  = TokenInfo([tokenOccurence])					
 					dictWords[token]=tokenInfo					
 
-		#CALCULANDO IDF
+
+		#CALCULANDO IDF e TAM DOCUMEN
 		for token in dictWords.keys():	
 			tokenInfo = dictWords[token]				
 			idf = self.calculation_idf(sizeCollection,tokenInfo.size_listTokenOccurence())
@@ -61,18 +70,7 @@ class Build_index(object):
 		return math.log((float(numberOfDocuments)/float(df)))	
 
 	def list_all_documents(self):			
-		return os.listdir(self.directory)
-
-	#Calculando o max{token} no Documento T	
-	def update_max_freque_document(self,freque,file):
-		if file in self.dictDocument:
-			if freque > self.dictDocument[file].get_maxToken():
-				inforDocument = self.dictDocument[file]
-				inforDocument.set_maxToken(freque)
-				self.dictDocument[file] = inforDocument						
-		else:					
-			self.dictDocument[file] = InforDocument(0.0,freque)				
-			
+		return os.listdir(self.directory)			
 
 	def write_dict():
 		pass
@@ -84,7 +82,7 @@ name = "dictionary"
 
 manipulateFile = ManipulateFile()
 manipulateFile.write_file(name,dictWords)
-
+print("|Concluido|")	
 
 
 

@@ -6,21 +6,16 @@ class ManipulateFile(object):
 		pass
 
 	
-	def write_file(self,name_file,dictionary):			
-		#file = self.openFile(name_file,'wb')					
+	def write_file(self,name_file,dictionary):					
 		file = open(name_file+'.txt','wb')
 		pickle.dump(dictionary,file)
 		file.close()
 
-
-	def read_file(self,name_file):
-		file = self.openFile(name_file,'rb')					
-		dictionary = pickle.load(arqu)
+	def read_file(self,name_file):		
+		file = open(name_file+'.txt','rb')
+		dictionary = pickle.load(file)
 		file.close()
 		return dictionary
-
-	def open_file(self,name,operation):
-		return open(name,operation)
 
 
 	def list_all_documents(self):			
