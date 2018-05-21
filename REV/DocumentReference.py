@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+import math
 class DocumentReference(object):	
 	def __init__(self, path):
 		self._path = path

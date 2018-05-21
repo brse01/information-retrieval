@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import os
+import nltk
 import math
+
 from TextFileDocument import TextFileDocument
 from DocumentReference import DocumentReference
 from TokenOccurence import TokenOccurence
@@ -12,11 +14,12 @@ from InforDocument import InforDocument
 class Build_index(object):	
 
 	#directory = "/home/bruno/Documentos/RI/information-retrieval/Implementação2/teste/"
-	directory ="/home/bruno/Documentos/RI/stories/"
+	directory ="/home/bruno/Documentos/RI/stories/"	
 	# GUARDAR A MAIOR FREQUENCIA DENTRO DO ARQUIVO
 	dictDocument = {}	
 	
 	def create_dict(self):	
+		dictStopWords = self.get_stopwords()
 		limite = int(input("Sistema deve indexar quantos arquivos? "))
 		if limite == 0:
 			limite = 1000
@@ -25,32 +28,31 @@ class Build_index(object):
 		cont = 0
 		print("|PROCESSANDO|")	
 		listDocument = self.list_all_documents()		
-		sizeCollection=len(listDocument)
-		# LISTA DE DOCUMENTOS.
+		sizeCollection=len(listDocument)		
+		# LISTA DE DOCUMENTOS.		
 		for file in listDocument:
 			cont += 1
 			if cont > limite:
 				break
-			#self.dictDocument[file] = InforDocument(0.0,0.0)			
-			hashTableVector = TextFileDocument(file).to_vector(self.directory)
+			#self.dictDocument[file] = InforDocument(0.0,0.0)						
+			hashTableVector = TextFileDocument(file).to_vector(self.directory,dictStopWords)
 			# LISTA DE TOKENS 
 			documentReference = DocumentReference(file)		
 			# VERIFICANDO QUEM É O TOKEN COM MAIOR OCORRENCIA.
 			freque_max  =  hashTableVector.max()		
 			documentReference.set_max_token(freque_max)
 			for token in hashTableVector.keys():
-				freque = hashTableVector.get(token)															
+				freque = hashTableVector.get(token)	
+				#frequeNormalize = int(freque)/int(freque_max)														
 				if token in dictWords:
 					tokenInfo = dictWords[token]					
 					tokenOccurence = TokenOccurence(documentReference,freque)
 					tokenInfo.set_tokenOccurence_list(tokenOccurence)
-					dictWords[token] = tokenInfo										
-					#dictWords[token].set_tokenOccurence_list(tokenOccurence)
+					dictWords[token] = tokenInfo															
 				else:										
 					tokenOccurence = TokenOccurence(documentReference,freque)					
 					tokenInfo  = TokenInfo([tokenOccurence])					
 					dictWords[token]=tokenInfo					
-
 
 		#CALCULANDO IDF e TAM DOCUMEN
 		for token in dictWords.keys():	
@@ -64,16 +66,20 @@ class Build_index(object):
 			
 		return dictWords		
 		
-
 	
 	def calculation_idf(self,numberOfDocuments,df):
 		return math.log((float(numberOfDocuments)/float(df)))	
 
 	def list_all_documents(self):			
 		return os.listdir(self.directory)			
+	
 
-	def write_dict():
-		pass
+	def get_stopwords(self):			
+		stopwords = nltk.corpus.stopwords.words('english')	
+		dictStopWords= {}
+		for x in stopwords:
+			dictStopWords[x]=""
+		return dictStopWords
 
 
 build_index = Build_index()
