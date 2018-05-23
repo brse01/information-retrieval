@@ -14,7 +14,7 @@ from InforDocument import InforDocument
 class Build_index(object):	
 
 	#directory = "/home/bruno/Documentos/RI/information-retrieval/Implementação2/teste/"
-	directory ="/home/bruno/Documentos/RI/stories/"	
+	directory ="/home/bruno/Área de Trabalho/cfc/arquivos_cfc/"	
 	# GUARDAR A MAIOR FREQUENCIA DENTRO DO ARQUIVO
 	dictDocument = {}	
 	
