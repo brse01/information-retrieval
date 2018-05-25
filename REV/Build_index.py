@@ -14,7 +14,7 @@ from InforDocument import InforDocument
 class Build_index(object):	
 
 	#directory = "/home/bruno/Documentos/RI/information-retrieval/Implementação2/teste/"
-	directory ="/home/bruno/Área de Trabalho/cfc/arquivos_cfc/"	
+	directory ="/home/bruno/Área de Trabalho/information-retrieval/cfc/arquivos_cfc/"	
 	# GUARDAR A MAIOR FREQUENCIA DENTRO DO ARQUIVO
 	dictDocument = {}	
 	
@@ -35,7 +35,7 @@ class Build_index(object):
 			if cont > limite:
 				break
 			#self.dictDocument[file] = InforDocument(0.0,0.0)						
-			hashTableVector = TextFileDocument(file).to_vector(self.directory,dictStopWords)
+			hashTableVector = TextFileDocument(file).to_vector(self.directory,dictStopWords)						
 			# LISTA DE TOKENS 
 			documentReference = DocumentReference(file)		
 			# VERIFICANDO QUEM É O TOKEN COM MAIOR OCORRENCIA.
