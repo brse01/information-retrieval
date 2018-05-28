@@ -14,8 +14,7 @@ class TextFileDocument(object):
 		file =open(path+self.url_document,'r', encoding='utf-8');
 		words = file.read()									
 		file.close()		
-		modifiedWords =  ManipulateFile().filter_text(words)		
-		
+		modifiedWords =  ManipulateFile().filter_text(words)				
 		stemmer = nltk.stem.RSLPStemmer()
 		modifiedWords = re.sub('[^A-Za-z]+',' ',modifiedWords)						
 		#DEIXANDO TODAS MINUSCULAS
@@ -26,7 +25,7 @@ class TextFileDocument(object):
 			toke = stemmer.stem(toke)				
 			if not dictStopWords.__contains__(toke): 
 				resultTokenize.append(toke)			
-		#hasTableVector			
+		#hasTableVector				
 		return FreqDist(resultTokenize)			
 
 

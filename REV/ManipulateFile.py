@@ -1,5 +1,7 @@
 import pickle
 import os
+import nltk
+from nltk import FreqDist
 
 class ManipulateFile(object):
 	def __init__(self):
@@ -34,19 +36,8 @@ class ManipulateFile(object):
 				if word[i][:2] == "SO":
 					result = result+ word[i][3:]
 		return result
-	
-	#CAPITURAR APENAS AS LINHAS DE PESQUISAS DENTRO DOS DOCUMENTOS DE PESQUISAS
-	def filter_text_query(self,path):
-		lines= []		
-		file =open(path+self.url_document,'r', encoding='utf-8');				
-		for line in file:
-			line = line.replace('\n','')
-			if "RD" in line:
-				file.close()									
-				return lines[1:len(lines)-1]
-			else:
-				lines.append(line)	
-
+	    
+	#METODO DA OK
 	#CAPITURAR APENAS AS LINHAS DE PESQUISAS DENTRO DOS DOCUMENTOS DE PESQUISAS			
 	def filter_query_document(self,text):
 		query_text = text.split("\n")
@@ -59,7 +50,7 @@ class ManipulateFile(object):
 		return query[3:]
 
 	#CAPITURAR APENAS OS NÚMEROS DE DOCUMENTOS RELEVANTES DENTRO DE UM DOCUMENTO DE PESQUISA	
-	def filter_list_docs(self,text):
+	def filter_list_docs(self,text):	
 		aux = 0
 		docs = ""
 		text = text.split("\n")
@@ -67,24 +58,26 @@ class ManipulateFile(object):
 			if text[i][:2] == "RD":
 				docs = text[i][4:]
 				aux = 1
+				continue
 			if aux == 1:
-				docs = docs + " " + text[i][4:]
-		result_docs = ""
-		for i in range(0,len(docs)):
-			if docs[i] != " " and aux % 2 != 0:
-				result_docs = result_docs + docs[i]
-			else:
-				if docs[i] == " " and i+1 < len(docs) and docs[i+1] != " ":
-					result_docs = result_docs + " "
-					aux = aux + 1
-		result_docs = result_docs.replace("  ", " ")
-		docs = result_docs.strip().split(" ")
+				if text[i][4] == " ":
+					docs = docs + " " + text[i][4:]
+				else:
+					docs = docs + " " + text[i][3:]
 		result_docs = []
-		for doc in docs:
-			#result_docs.append(int(doc))
-			print(doc)
-			result_docs.append(doc)
+		docs = docs.replace("  "," ")
+		docs = docs.replace("  "," ")
+		docs = docs.split(" ")		
+		docs = docs[1:]
+		for i in range(0,len(docs)):
+			if i % 2 == 0 and docs[i] != "":
+				result_docs.append(int(docs[i]))	
 		return result_docs
 
 
-
+	def get_stopwords(self):			
+		stopwords = nltk.corpus.stopwords.words('english')	
+		dictStopWords= {}
+		for x in stopwords:
+			dictStopWords[x]=""
+		return dictStopWords

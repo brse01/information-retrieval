@@ -9,32 +9,28 @@ from ManipulateFile import ManipulateFile
 
 class TextStringDocument(object):
 	def __init__(self, url_document):
-		self.url_document = url_document
-	
-
+		self.url_document = url_document	
+	# dictStopWords = onde tem as palavras que devem ser ignoradas	
 	def to_vector(self,path,dictStopWords):		
+		#TEM ERRO AQUI
+		print(path+self.url_document)
 		file =open(path+self.url_document,'r', encoding='utf-8');
 		word = file.read()									
 		file.close()		
-		listDocument = ManipulateFile().filter_list_docs(word) 
-		query = ManipulateFile().filter_query_document(word)				
-		
+		listDocument = ManipulateFile().filter_list_docs(word) 						
+		query = ManipulateFile().filter_query_document(word)							
 		stemmer = nltk.stem.RSLPStemmer()				
-		words = re.sub('[^A-Za-z]+',' ',query)		
-		words = words.lower()		
-		word_tokenize = nltk.word_tokenize(words)										
-		resultTokenize = []
-		for toke in word_tokenize:
-			toke = stemmer.stem(toke)				
-			if not dictStopWords.__contains__(toke): 
-				resultTokenize.append(toke)			
-		#hasTableVector
-		print("resultTokenize")
-		print(resultTokenize)
-		freqDist = FreqDist(resultTokenize)
-		print("FreqDist")
-		print(freqDist)		
-		return  (freqDist,listDocument)				
+		
+		modifiedQuery = re.sub('[^A-Za-z]+',' ',query)			
+		modifiedQuery = modifiedQuery.lower()		
+		query_tokenize = nltk.word_tokenize(modifiedQuery)	
+		resultTokenize = []		
+		for toke in query_tokenize:
+			toke = stemmer.stem(toke)
+			if not dictStopWords.__contains__(toke):
+				resultTokenize.append(toke)
+		
+		return (FreqDist(resultTokenize),listDocument)					
 		
 		
 	def treat_data(self,words):
@@ -47,11 +43,6 @@ class TextStringDocument(object):
 			toke = stemmer.stem(toke)				
 			if not dictStopWords.__contains__(toke): 
 				resultTokenize.append(toke)
-
-		print("resultTokenize")
-		print(resultTokenize)
-		print("FreqDist")
-		freqDist = FreqDist(resultTokenize)
-		print(freqDist.keys())
-
+		
+		freqDist = FreqDist(resultTokenize)		
 		return freqDist

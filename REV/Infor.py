@@ -2,20 +2,33 @@
 # -*- coding: utf-8 -*
 
 class Infor(object):
-	def __init__(self,relevant,overage,accuracy):
-		self._relevant = relevant		
-		self._coverage = coverage
-		self._accuracy = accuracy
+	def __init__(self,doc,r,p,flag):
+		self._doc = doc
+		self._r= r
+		self._p= p		
+		self._flag = flag
+
+	def get_doc(self):
+		return self._doc
+
+	def get_r(self):
+		return self._r
+
+	def get_p(self):
+		return self._p
+
+	def get_flag(self):
+		return self._flag
+
+	def __repr__(self):
+		return '<{}-{}-{}-{}>\n'.format(self._doc,str(self._r),str(self._p),str(self._flag))
 
 
-	def get_coverage(self):
-		return self._coverage
 
-	def get_accuuracy(self):
-		return self._accuracy
+		
 
-	def get_relevant(self):
-		return self._relevant
+
+	
 
 
 
