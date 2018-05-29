@@ -18,9 +18,8 @@ class TextStringDocument(object):
 		word = file.read()									
 		file.close()		
 		listDocument = ManipulateFile().filter_list_docs(word) 						
-		query = ManipulateFile().filter_query_document(word)							
-		stemmer = nltk.stem.RSLPStemmer()				
-		
+		query = ManipulateFile().filter_query_document(word)									
+		stemmer = nltk.stem.RSLPStemmer()						
 		modifiedQuery = re.sub('[^A-Za-z]+',' ',query)			
 		modifiedQuery = modifiedQuery.lower()		
 		query_tokenize = nltk.word_tokenize(modifiedQuery)	
@@ -30,9 +29,8 @@ class TextStringDocument(object):
 			if not dictStopWords.__contains__(toke):
 				resultTokenize.append(toke)
 		
-		return (FreqDist(resultTokenize),listDocument)					
-		
-		
+		return (FreqDist(resultTokenize),listDocument)									
+'''		
 	def treat_data(self,words):
 		stemmer = nltk.stem.RSLPStemmer()				
 		word = re.sub('[^A-Za-z]+',' ',words)		
@@ -46,3 +44,4 @@ class TextStringDocument(object):
 		
 		freqDist = FreqDist(resultTokenize)		
 		return freqDist
+'''

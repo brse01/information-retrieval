@@ -19,9 +19,9 @@ class Infor(object):
 
 	def get_flag(self):
 		return self._flag
-
+	#FORMA DE FORMATAR A IMPRESSÃO DE TODOS OS DADOS DE UMA CLASSE	
 	def __repr__(self):
-		return '<{}-{}-{}-{}>\n'.format(self._doc,str(self._r),str(self._p),str(self._flag))
+		return '<Documento: {}\nr: {}\np: {}\nRelevante: {}\n> '.format(self._doc,str(self._r),str(self._p),str(self._flag))
 
 
 

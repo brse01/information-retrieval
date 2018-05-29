@@ -14,7 +14,7 @@ class TextFileDocument(object):
 		file =open(path+self.url_document,'r', encoding='utf-8');
 		words = file.read()									
 		file.close()		
-		modifiedWords =  ManipulateFile().filter_text(words)				
+		modifiedWords =  ManipulateFile().filter_text_document(words)				
 		stemmer = nltk.stem.RSLPStemmer()
 		modifiedWords = re.sub('[^A-Za-z]+',' ',modifiedWords)						
 		#DEIXANDO TODAS MINUSCULAS
