@@ -19,3 +19,6 @@ class DocumentReference(object):
 	def get_max_token(self):
 		return self._max_token
 
+	def get_path(self):
+		return self._path
+

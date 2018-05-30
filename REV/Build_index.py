@@ -14,7 +14,7 @@ from InforDocument import InforDocument
 class Build_index(object):	
 
 	#directory = "/home/bruno/Documentos/RI/information-retrieval/Implementação2/teste/"
-	directory ="/home/bruno/Área de Trabalho/cfc/arquivos_cfc/"	
+	directory ="/home/bruno/Área de Trabalho/information-retrieval/cfc/arquivos_cfc/"	
 	# GUARDAR A MAIOR FREQUENCIA DENTRO DO ARQUIVO
 	dictDocument = {}	
 	
@@ -22,7 +22,7 @@ class Build_index(object):
 		dictStopWords = self.get_stopwords()
 		limite = int(input("Sistema deve indexar quantos arquivos? "))
 		if limite == 0:
-			limite = 1000
+			limite = 1239
 
 		dictWords = {}
 		cont = 0
@@ -35,22 +35,24 @@ class Build_index(object):
 			if cont > limite:
 				break
 			#self.dictDocument[file] = InforDocument(0.0,0.0)						
-			hashTableVector = TextFileDocument(file).to_vector(self.directory,dictStopWords)
+			hashTableVector = TextFileDocument(file).to_vector(self.directory,dictStopWords)						
 			# LISTA DE TOKENS 
 			documentReference = DocumentReference(file)		
 			# VERIFICANDO QUEM É O TOKEN COM MAIOR OCORRENCIA.
-			freque_max  =  hashTableVector.max()		
+			freque_max  =  hashTableVector.max()
 			documentReference.set_max_token(freque_max)
 			for token in hashTableVector.keys():
-				freque = hashTableVector.get(token)	
-				#frequeNormalize = int(freque)/int(freque_max)														
+				freque = hashTableVector.get(token)					
+				#frequeNormalize = freque/int(freque_max)
 				if token in dictWords:
 					tokenInfo = dictWords[token]					
 					tokenOccurence = TokenOccurence(documentReference,freque)
+					#tokenOccurence = TokenOccurence(documentReference,frequeNormalize)					
 					tokenInfo.set_tokenOccurence_list(tokenOccurence)
 					dictWords[token] = tokenInfo															
 				else:										
 					tokenOccurence = TokenOccurence(documentReference,freque)					
+					#tokenOccurence = TokenOccurence(documentReference,frequeNormalize)					
 					tokenInfo  = TokenInfo([tokenOccurence])					
 					dictWords[token]=tokenInfo					
 
