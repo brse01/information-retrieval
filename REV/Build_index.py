@@ -22,7 +22,7 @@ class Build_index(object):
 		dictStopWords = self.get_stopwords()
 		limite = int(input("Sistema deve indexar quantos arquivos? "))
 		if limite == 0:
-			limite = 1000
+			limite = 1239
 
 		dictWords = {}
 		cont = 0

@@ -15,12 +15,12 @@ from TextStringDocument import TextStringDocument
 from DocumentReferenceQuery import DocumentReferenceQuery
 from Infor import Infor
 from GenerateChart import GenerateChart
-
+from Avaliation import Avaliation
 class Rev(object):	
 		
 	dictionaryWords = ManipulateFile().read_file("dictionary")
 	directory ="/home/bruno/Área de Trabalho/information-retrieval/cfc/consultas_cfc/"			
-	globalLower = 1000000
+	value = 50
 
 	def search(self,file,sizeCollection,dictStopWords):
 		#TROCAR ESSA BUSCA AQUI		
@@ -101,6 +101,7 @@ class Rev(object):
 
 	def process_all(self):
 		listScores = []
+		totalRelevantesRetornado =[]
 		dictStopWords = ManipulateFile().get_stopwords()
 		limite = int(input("Sistema deve indexar quantos arquivos de consultas? "))
 		if limite == 0:
@@ -110,40 +111,39 @@ class Rev(object):
 		print("|PROCESSANDO-process_all|")
 		listDocumentQuery = self.list_all_documents()
 		sizeCollection = len(listDocumentQuery)
+		listPrecisionR=[]
 		for file in listDocumentQuery:
 			cont+=1
 			if cont > limite:
 				break
 			#parameters	= [SCORES PARA AQUELA CONSULTA,LISTA DOS RELEVANTES PARA A CONSULTA QUERY]			
-			parameters = self.search(file,sizeCollection,dictStopWords)											
-			listResultScore = self.calculation_precise_coverage(parameters)
+			parameters = self.search(file,sizeCollection,dictStopWords)														
+			p = self.calculation_precise_coverage(parameters)
+			listResultScore = p[0]
+			#listPrecisionR.append(Avaliation().precision_r(listResultScore,6))
 			#lista_final = [x for x in parameters[0] if x not in parameters[1]]
 			#DEPOIS ADICOONAR NA LISTA 
 			#listScores.append(listResultScore)						
+			totalRelevantesRetornado.append(p[1])
 			listScores.append(listResultScore)
-		print("|FIM-process_all|")			
+		print("|FIM-process_all|")
+
 		return listScores	
 	
-	def calculation_precise_coverage(self,parameters):	
+	def calculation_precise_coverage(self,parameters):		
 		#LISTA COM OS NÚMEROS DOS DOCUMENTOS RELEVANTES PARA A CONSULTA Q
 		listDocRelevant = parameters[1]		
 		allRelevant = len(listDocRelevant)
 		if allRelevant > 20:
 			allRelevant= 20
 
-		listResultScore = []
-		#listResultScoreC= []
-		#listResultScoreP= []
+		listResultScore = []		
 		cont=0
 		score = parameters[0]				
 		position=1
 		flag=0				
-		auxSmaller=len(score)						
-
-		if self.globalLower > auxSmaller: 			
-			self.globalLower = auxSmaller		
-			
-		for n in score[0:20]:
+		auxSmaller=len(score)
+		for n in score[0:self.value]:
 			doc = int(n[0].get_path())			
 			if doc in listDocRelevant:				
 				print("Doc"+str(doc)+" posição>"+str(position))
@@ -154,26 +154,33 @@ class Rev(object):
 				p = float(cont/position)	
 			except ZeroDivisionError:
 				p=0										
-			listResultScore.append(Infor(doc,c,p,flag))			
-			#listResultScoreC.append(c)
-			#listResultScoreP.append(p)
+			listResultScore.append(Infor(doc,c,p,flag))								
 			position+=1				
 			flag=0		
-		return listResultScore	
-		'''
-		print("tam"+str(len(listResultScoreC[0:20])))
-		plt.plot(listResultScoreC[0:20],listResultScoreP[0:20],color='orange')
-		plt.xlabel("Cobertura")
-		plt.ylabel("Precisão")
-		plt.title("Precisão Média")
-		plt.show()	
-		'''		
+		return (listResultScore,cont)	
+
 
 	def calculation_idf(self,numberOfDocuments,df):
 		return math.log((float(numberOfDocuments)/float(df)))		
 
 	def list_all_documents(self):			
 		return os.listdir("/home/bruno/Área de Trabalho/information-retrieval/cfc/consultas_cfc/")	
+
+c = Rev()
+a = Avaliation()
+#re=c.function(c.process_all())
+re= a.function(c.process_all())
+c = re[0]
+p = re[1]
+
+
+'''
+		print("tam"+str(len(listResultScoreC[0:20])))
+		plt.plot(listResultScoreC[0:20],listResultScoreP[0:20],color='orange')
+		plt.xlabel("Cobertura")
+		plt.ylabel("Precisão")
+		plt.title("Precisão Média")
+		plt.show()	
 
 	def process_help(self,position,listScores):
 		accumulatorC = 0.0
@@ -183,61 +190,26 @@ class Rev(object):
 			accumulatorP+= infor[position].get_p()
 		return (accumulatorC,accumulatorP)
 
-
-	#ERRO ESTÁ AQUI#
 	def function(self,listAll):
 		resultC = []
 		resultP = []
 		accumulatorC = 0.0
 		accumulatorP = 0.0
 		m = len(listAll)			
-		for k in range(20):
+		for k in range(self.value):
 			r = self.process_help(k,listAll)			
 			resultC.append(r[0]/m)
 			resultP.append(r[1]/m)
 
-		return (resultC,resultP)
+		return (resultC,Avaliation().interpolation_p(resultP))
 
-
-	def interpolation_p(self,p):
-		print("interpolation_p> "+str(type(p)))
-		for i in range(0,len(p)):
-			k = p[i]
-			for w in range(0,len(p)):
-				compared = p[w]
-				if compared > k:
-					k = compared
-			p[i] = k
-		return p
-
-
-
-
-
-
-c = Rev()
-re=c.function(c.process_all())
-#(resultR,resultP)
-#c -> Cobertura
-#p-> Precisão
-c = re[0]
-p = re[1]
-pk = p[0:20]
-print(type(pk))
-p_interpolation = c.interpolation_p(pk)
-
-GenerateChart().generate(c[0:20],p_interpolation,"Cobertura","Precisão","Precisão Média")
-
-'''
-plt.plot(c[0:20],p[0:20],color='orange')
-plt.xlabel("Cobertura")
-plt.ylabel("Precisão")
-plt.title("Precisão Média")
-plt.show()
-'''
-'''
-for k in result:		
-	for i in range(len(k)):
-		if k[i].get_flag() == 1:		
-			print('Documento: '+str(k[i].get_doc())+' É RELEVANTE> '+ str(k[i].get_flag()) + ' Relevancia do documento '+ str(k[i].get_r()))
-#'''
+print("Documentos Relevantes retornado x Consultas")							
+plt.plot(totalRelevantesRetornado,color='red')
+		#plt.grid(True)
+		#plt.axis([0,50,0,100])				
+		plt.xlabel("Consultas")
+		plt.ylabel("Releantes Retornados")
+		plt.title("Documentos Relevantes retornado x Consultas")
+		plt.savefig('relevantesXConsultas.png') 
+		plt.show()
+'''	

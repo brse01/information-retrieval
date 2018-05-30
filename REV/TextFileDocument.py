@@ -14,17 +14,19 @@ class TextFileDocument(object):
 		file =open(path+self.url_document,'r', encoding='utf-8');
 		words = file.read()									
 		file.close()		
-		modifiedWords =  ManipulateFile().filter_text_document(words)				
+		modifiedWords =  ManipulateFile().filter_text_document(words)						
 		stemmer = nltk.stem.RSLPStemmer()
 		modifiedWords = re.sub('[^A-Za-z]+',' ',modifiedWords)						
 		#DEIXANDO TODAS MINUSCULAS
 		modifiedWords = modifiedWords.lower()										
 		word_tokenize = nltk.word_tokenize(modifiedWords)								
 		resultTokenize = []		
-		for toke in word_tokenize:
+		
+		for toke in word_tokenize:			
 			toke = stemmer.stem(toke)				
-			if not dictStopWords.__contains__(toke): 
+			if not dictStopWords.__contains__(toke):
 				resultTokenize.append(toke)					
+		
 		return FreqDist(resultTokenize)
 
 

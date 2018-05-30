@@ -28,21 +28,5 @@ class TextStringDocument(object):
 		for toke in query_tokenize:
 			toke = stemmer.stem(toke)
 			if not dictStopWords.__contains__(toke):
-				resultTokenize.append(toke)
-		
+				resultTokenize.append(toke)		
 		return (FreqDist(resultTokenize),listDocument)									
-'''		
-	def treat_data(self,words):
-		stemmer = nltk.stem.RSLPStemmer()				
-		word = re.sub('[^A-Za-z]+',' ',words)		
-		word = word.lower()		
-		word_tokenize = nltk.word_tokenize(word)										
-		resultTokenize = []
-		for toke in word_tokenize:
-			toke = stemmer.stem(toke)				
-			if not dictStopWords.__contains__(toke): 
-				resultTokenize.append(toke)
-		
-		freqDist = FreqDist(resultTokenize)		
-		return freqDist
-'''
