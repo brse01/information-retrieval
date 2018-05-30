@@ -1,3 +1,5 @@
+from InforNormalize import InforNormalize
+
 class Avaliation(object):
 
 	def calculation_precise_coverage(self,parameters):
@@ -22,19 +24,22 @@ class Avaliation(object):
 			listResultScore.append(Infor(doc,r,p,flag))
 			position+=1	
 			flag = 0	
-
 		return listResultScore
 
- 
-	 def function(self,listAll,globalLower):
-	 	result = []
-	 	accumulatorR = 0.0
-	 	accumulatorP = 0.0
-	 	for infor in listAll:
-	 		for i in range(globalLower):
-	 			#accumulatorP+=infor[i].get_r()
-	 			#accumulatorR+=infor[i].get_p()	 			
-	 			
 
+ 	#r -> Cobertura
+	#p-> Precisã
+	 def function(self,listAll,globalLower):	 	
+	 	resultC = []
+		resultP = []
+		accumulatorC = 0.0
+		accumulatorP = 0.0	 		 	
+		for i in range(20):
+			for infor in listAll:
+				accumulatorC+=infor[i].get_c()
+				accumulatorP+=infor[i].get_p()	 				 			 			 		
+			resultC.append((accumulatorC/self.globalLower))
+			resultP.append((accumulatorP/self.globalLower))
+		return (resultC,resultP)
 
 	 	

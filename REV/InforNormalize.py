@@ -2,19 +2,12 @@
 # -*- coding: utf-8 -*
 
 class InforNormalize(object):
-	def __init__(self,lower):
-		self._r= 0.0
-		self._p= 0.0
-		self._lower= lower
+	def __init__(self,r,plower):
+		self._r= r
+		self._p= p
 
 	def get_r(self):
-		return (self._r/self._lower)
+		return self._r
 
 	def get_p(self):
-		return (self._p/self._lower)
-
-	def set_r(self,r):
-		self._r +=r
-
-	def set_p(self,):
-		self._p +=p
+		return self._p

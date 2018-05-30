@@ -13,11 +13,12 @@ class TextStringDocument(object):
 	# dictStopWords = onde tem as palavras que devem ser ignoradas	
 	def to_vector(self,path,dictStopWords):		
 		#TEM ERRO AQUI
-		print(path+self.url_document)
+		print(self.url_document)
 		file =open(path+self.url_document,'r', encoding='utf-8');
 		word = file.read()									
 		file.close()		
 		listDocument = ManipulateFile().filter_list_docs(word) 						
+		print(len(listDocument))
 		query = ManipulateFile().filter_query_document(word)									
 		stemmer = nltk.stem.RSLPStemmer()						
 		modifiedQuery = re.sub('[^A-Za-z]+',' ',query)			

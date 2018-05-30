@@ -5,6 +5,7 @@ import re
 import os
 import math
 
+import matplotlib.pyplot as plt
 from ManipulateFile import ManipulateFile
 from TextFileDocument import TextFileDocument
 from DocumentReference import DocumentReference
@@ -16,7 +17,6 @@ from Infor import Infor
 
 
 class Rev(object):	
-
 		
 	dictionaryWords = ManipulateFile().read_file("dictionary")
 	directory ="/home/bruno/Área de Trabalho/information-retrieval/cfc/consultas_cfc/"			
@@ -34,7 +34,7 @@ class Rev(object):
 		freque_max = hashTableVector.max()
 		documentReference.set_max_token(freque_max)
 		for token in hashTableVector.keys():
-			freque = hashTableVector.get(token)	
+			freque = hashTableVector.get(token)				
 			#frequeNormalize = float(freq/freque_max)
 			if token in dictQuery:
 				tokenInfo = dictQuery[token]					
@@ -117,15 +117,15 @@ class Rev(object):
 			listResultScore = self.calculation_precise_coverage(parameters)
 			#lista_final = [x for x in parameters[0] if x not in parameters[1]]
 			#DEPOIS ADICOONAR NA LISTA 
-			listScores.append(listResultScore)						
+			#listScores.append(listResultScore)						
+			listScores.append(listResultScore)
 		print("|FIM-process_all|")			
 		return listScores	
-
-	#listResultScore = [doc,(r,p,relevant)]
+	
 	def calculation_precise_coverage(self,parameters):	
 		#LISTA COM OS NÚMEROS DOS DOCUMENTOS RELEVANTES PARA A CONSULTA Q
 		listDocRelevant = parameters[1]		
-		allRelevant = len(listDocRelevant)		
+		allRelevant = len(listDocRelevant)				
 		listResultScore = []
 		cont=0
 		score = parameters[0]				
@@ -136,20 +136,23 @@ class Rev(object):
 		if self.globalLower > auxSmaller: 			
 			self.globalLower = auxSmaller		
 			
-		for n in score:
+		for n in score[:20]:
 			doc = int(n[0].get_path())			
 			if doc in listDocRelevant:				
+				print("Doc"+str(doc)+" posição>"+str(position))
 				cont+=1
-				flag=1				
+				flag=1							
 				
-			r = float(position/allRelevant)
+			c = float(cont/allRelevant)			
 			try:
-				p = float(position/cont)	
+				p = float(cont/position)	
 			except ZeroDivisionError:
-				p=0							
-			listResultScore.append(Infor(doc,r,p,flag))
+				p=0										
+			listResultScore.append(Infor(doc,c,p,flag))
 			position+=1				
-			flag=0			
+			flag=0		
+
+
 		return listResultScore
 
 
@@ -160,20 +163,40 @@ class Rev(object):
 		return os.listdir("/home/bruno/Área de Trabalho/information-retrieval/cfc/consultas_cfc/")	
 
 	def function(self,listAll):
-	 	result = []
-	 	accumulatorR = 0.0
-	 	accumulatorP = 0.0	 		 	
-	 	for l in listAll:	 			 	
-	 		for i in range(int(self.globalLower)):	 			
-	 			print(l[i].get_doc()) 		
+		resultC = []
+		resultP = []
+		accumulatorC = 0.0
+		accumulatorP = 0.0	 		 	
+		for i in range(20):
+			for infor in listAll:
+				accumulatorC+=infor[i].get_c()
+				accumulatorP+=infor[i].get_p()	 				 			 			 								
+			resultC.append((accumulatorC/20))
+			resultP.append((accumulatorP/20))
+		return (resultC,resultP)
 
 
 c = Rev()
-#result= c.process_all()
-c.function(c.process_all())
+re=c.function(c.process_all())
+#(resultR,resultP)
+#c -> Cobertura
+#p-> Precisão
+c = re[0]
+p = re[1]
+
+plt.plot(c[:20],p[:20],color='orange')
+plt.xlabel("Cobertura")
+plt.ylabel("Precisão")
+plt.title("Precisão Média")
+plt.show()
+
 '''
+plt.plot(re[1],re[0],color='orange')
+plt.title("Muito Fácil")
+plt.show()
+
 for k in result:		
 	for i in range(len(k)):
 		if k[i].get_flag() == 1:		
 			print('Documento: '+str(k[i].get_doc())+' É RELEVANTE> '+ str(k[i].get_flag()) + ' Relevancia do documento '+ str(k[i].get_r()))
-'''
+#'''
