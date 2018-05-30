@@ -26,20 +26,50 @@ class Avaliation(object):
 			flag = 0	
 		return listResultScore
 
-
- 	#r -> Cobertura
-	#p-> Precisã
-	 def function(self,listAll,globalLower):	 	
-	 	resultC = []
+	 def process_help(self,position,listScores):
+		accumulatorC = 0.0
+		accumulatorP = 0.0
+		for infor in listScores:
+			accumulatorC+= infor[position].get_c()
+			accumulatorP+= infor[position].get_p()
+		return (accumulatorC,accumulatorP)
+	
+	def function(self,listAll):
+		resultC = []
 		resultP = []
 		accumulatorC = 0.0
-		accumulatorP = 0.0	 		 	
-		for i in range(20):
-			for infor in listAll:
-				accumulatorC+=infor[i].get_c()
-				accumulatorP+=infor[i].get_p()	 				 			 			 		
-			resultC.append((accumulatorC/self.globalLower))
-			resultP.append((accumulatorP/self.globalLower))
+		accumulatorP = 0.0
+		m = len(listAll)			
+		for k in range(20):
+			r = self.process_help(k,listAll)			
+			resultC.append(r[0]/m)
+			resultP.append(r[1]/m)
+
 		return (resultC,resultP)
+		
+	def interpolation_p(self,p):
+		for i in range(0,len(p)):
+			k = p[i]
+			for w in range(0,len(p)):
+				compared = p[w]
+				if compared > k:
+					k = compared
+			p[i] = k
+		return p
+
+	'''
+	def calculate_precision_interpolation_consult(self, precisaoCobertura):
+		for i in range(0,len(precisaoCobertura)):
+			tuplaI = precisaoCobertura[i]
+			for j in range(i,len(precisaoCobertura)):
+				tuplaJ = precisaoCobertura[j]
+				if tuplaJ[2] > tuplaI[2]:
+					tuplaI = (tuplaI[0],tuplaI[1],tuplaJ[2])
+			precisaoCobertura[i] = tuplaI #(tuplaI[0],tuplaI[1],tuplaI[2])
+		return precisaoCobertura
+	'''
+	
+
+
 
 	 	

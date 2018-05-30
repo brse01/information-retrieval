@@ -39,18 +39,20 @@ class Build_index(object):
 			# LISTA DE TOKENS 
 			documentReference = DocumentReference(file)		
 			# VERIFICANDO QUEM É O TOKEN COM MAIOR OCORRENCIA.
-			freque_max  =  hashTableVector.max()		
+			freque_max  =  hashTableVector.max()
 			documentReference.set_max_token(freque_max)
 			for token in hashTableVector.keys():
-				freque = hashTableVector.get(token)	
-				#frequeNormalize = int(freque)/int(freque_max)														
+				freque = hashTableVector.get(token)					
+				#frequeNormalize = freque/int(freque_max)
 				if token in dictWords:
 					tokenInfo = dictWords[token]					
 					tokenOccurence = TokenOccurence(documentReference,freque)
+					#tokenOccurence = TokenOccurence(documentReference,frequeNormalize)					
 					tokenInfo.set_tokenOccurence_list(tokenOccurence)
 					dictWords[token] = tokenInfo															
 				else:										
 					tokenOccurence = TokenOccurence(documentReference,freque)					
+					#tokenOccurence = TokenOccurence(documentReference,frequeNormalize)					
 					tokenInfo  = TokenInfo([tokenOccurence])					
 					dictWords[token]=tokenInfo					
 

@@ -24,8 +24,7 @@ class TextFileDocument(object):
 		for toke in word_tokenize:
 			toke = stemmer.stem(toke)				
 			if not dictStopWords.__contains__(toke): 
-				resultTokenize.append(toke)			
-		#hasTableVector				
-		return FreqDist(resultTokenize)			
+				resultTokenize.append(toke)					
+		return FreqDist(resultTokenize)
 
 
