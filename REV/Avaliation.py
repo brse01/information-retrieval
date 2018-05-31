@@ -26,33 +26,17 @@ class Avaliation(object):
 			flag = 0	
 		return listResultScore
 
+
 	def process_help(self,position,listScores):
 		accumulatorC = 0.0
 		accumulatorP = 0.0
+		accumulatorF = 0.0
 		for infor in listScores:
 			accumulatorC+= infor[position].get_c()
 			accumulatorP+= infor[position].get_p()
-		return (accumulatorC,accumulatorP)
-	
-	def process_average(self,listAll):
-		resultC = []
-		resultP = []		
-		m = len(listAll)			
-		for k in range(50):
-			r = self.process_help(k,listAll)			
-			resultC.append(r[0]/m)
-			resultP.append(r[1]/m)
-
-		return (resultC,resultP)
-
-	def process_average_measure(self,listAll):		
-		f = []
-		m = len(listAll)			
-		for k in range(20):
-			r = self.process_help(k,listAll)
-		f.append(self.calculation_f_measure(r[1],r[0]))
-
-		
+			accumulatorF= accumulatorF + infor[position].get_Fmeasure()			
+		return (accumulatorC,accumulatorP,accumulatorF)
+			
 	def calculation_f_measure(self,p,r):
 		return 2 / (1/r) + (1/p)
 
@@ -76,13 +60,20 @@ class Avaliation(object):
 
 	def function(self,listAll):
 		resultC = []
-		resultP = []
-		accumulatorC = 0.0
-		accumulatorP = 0.0
+		resultP = []		
+		resultF = []				
 		m = len(listAll)			
-		for k in range(self.value):
-			r = self.process_help(k,listAll)			
-			resultC.append(r[0]/m)
-			resultP.append(r[1]/m)
+		for k in range(60):
+			r = self.process_help(k,listAll)						
+			resultC.append(r[0]/100)
+			resultP.append(r[1]/100)			
+			x = r[2]/100
+			if x <= 1.0:							
+				resultF.append(x)
+		return (resultC,self.interpolation_p(resultP),resultF)
 
-		return (resultC,Avaliation().interpolation_p(resultP))
+
+	
+
+
+

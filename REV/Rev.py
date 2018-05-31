@@ -20,7 +20,7 @@ class Rev(object):
 		
 	dictionaryWords = ManipulateFile().read_file("dictionary")
 	directory ="/home/bruno/Área de Trabalho/information-retrieval/cfc/consultas_cfc/"			
-	value = 50
+	value = 60
 
 	def search(self,file,sizeCollection,dictStopWords):
 		#TROCAR ESSA BUSCA AQUI		
@@ -28,7 +28,7 @@ class Rev(object):
 		parameters =  TextStringDocument(file).to_vector(self.directory,dictStopWords)
 		#Guardando nome do documento / Lista de documentos relevante para essa consulta		
 		documentReference = DocumentReference(file)		
-		#hasTableVector		
+		#hasTableVector				
 		hashTableVector = parameters[0]						
 		#MAIOR FREQUENCIA DENTRO DO DOCUMENTO DE QUERY
 		freque_max = hashTableVector.max()
@@ -101,7 +101,7 @@ class Rev(object):
 
 	def process_all(self):
 		listScores = []
-		totalRelevantesRetornado =[]
+		totalRelevantesRetornado =[]		
 		dictStopWords = ManipulateFile().get_stopwords()
 		limite = int(input("Sistema deve indexar quantos arquivos de consultas? "))
 		if limite == 0:
@@ -112,6 +112,7 @@ class Rev(object):
 		listDocumentQuery = self.list_all_documents()
 		sizeCollection = len(listDocumentQuery)
 		listPrecisionR=[]
+		averageMap=0.0
 		for file in listDocumentQuery:
 			cont+=1
 			if cont > limite:
@@ -126,38 +127,47 @@ class Rev(object):
 			#listScores.append(listResultScore)						
 			totalRelevantesRetornado.append(p[1])
 			listScores.append(listResultScore)
+			averageMap+=p[2]
 		print("|FIM-process_all|")
-
-		return listScores	
+		averageMap = averageMap/limite
+		return (listScores,averageMap)	
 	
 	def calculation_precise_coverage(self,parameters):		
 		#LISTA COM OS NÚMEROS DOS DOCUMENTOS RELEVANTES PARA A CONSULTA Q
 		listDocRelevant = parameters[1]		
 		allRelevant = len(listDocRelevant)
-		if allRelevant > 20:
-			allRelevant= 20
+		if allRelevant > self.value:
+			allRelevant = self.value
 
 		listResultScore = []		
 		cont=0
 		score = parameters[0]				
 		position=1
-		flag=0				
+		flag=0			
+		acumulation = 0.0				
 		auxSmaller=len(score)
 		for n in score[0:self.value]:
 			doc = int(n[0].get_path())			
-			if doc in listDocRelevant:				
-				print("Doc"+str(doc)+" posição>"+str(position))
+			if doc in listDocRelevant:
 				cont+=1
 				flag=1											
 			c = float(cont/allRelevant)			
 			try:
 				p = float(cont/position)	
 			except ZeroDivisionError:
-				p=0										
+				p=0
+			if flag == 1:				
+				acumulation+=p		
+
 			listResultScore.append(Infor(doc,c,p,flag))								
 			position+=1				
-			flag=0		
-		return (listResultScore,cont)	
+			flag=0
+		try:
+			acumulation = acumulation/cont	
+		except ZeroDivisionError:
+			acumulation =0
+		
+		return (listResultScore,cont,acumulation)	
 
 
 	def calculation_idf(self,numberOfDocuments,df):
@@ -169,10 +179,33 @@ class Rev(object):
 c = Rev()
 a = Avaliation()
 #re=c.function(c.process_all())
-re= a.function(c.process_all())
+parameters=c.process_all()
+listScores= parameters[0]
+print("MAP> "+str(parameters[1]))
+re= a.function(listScores)
 c = re[0]
 p = re[1]
+measure=re[2]
 
+#print(len(measure))
+'''
+plt.plot(c, linestyle='-', color='blue', label=u"Cobertura")
+plt.plot(measure, linestyle='--', color='green', label=u"Média F")
+plt.plot(p, linestyle='-.', color='red', label=u"Precisão")
+plt.legend(loc='upper right')
+
+plt.axis([0,100,0,1])		
+plt.grid(True)		
+plt.savefig('Média F.png') 
+plt.show()	
+'''
+
+#measure= a.process_average_measure(listScores)
+#plt.plot(measure,color='orange')
+#plt.xlabel("Cobertura")
+#plt.ylabel("Precisão")
+#plt.title("F-Measure")
+#plt.show()	
 
 '''
 		print("tam"+str(len(listResultScoreC[0:20])))
